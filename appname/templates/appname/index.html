@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURA Estate — недвижимость, которой можно доверять</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          display: ['Fraunces', 'Georgia', 'serif'],
+        },
+        boxShadow: {
+          'soft': '0 20px 50px -20px rgba(15, 23, 42, .25)',
+          'glow': '0 0 40px -8px rgba(16, 185, 129, .45)',
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Swiper -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+  [x-cloak]{display:none!important}
+  ::selection{background:#10b981;color:#fff}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:#0f172a}
+  ::-webkit-scrollbar-thumb{background:#334155;border-radius:8px;border:2px solid #0f172a}
+  ::-webkit-scrollbar-thumb:hover{background:#10b981}
+  :focus-visible{outline:2px solid #10b981;outline-offset:2px;border-radius:4px}
+
+  /* ---------- Grain texture ---------- */
+  .grain{position:relative}
+  .grain::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;z-index:1;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Hero grid backdrop ---------- */
+  .hero-grid{
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:54px 54px;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,#000 35%,transparent 100%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,#000 35%,transparent 100%);
+  }
+
+  /* ---------- Line-mask title reveal ---------- */
+  .line{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+  .line>span{display:inline-block;transform:translateY(115%);animation:rise .95s cubic-bezier(.16,1,.3,1) forwards}
+  .line:nth-child(1)>span{animation-delay:.15s}
+  .line:nth-child(2)>span{animation-delay:.3s}
+  .line:nth-child(3)>span{animation-delay:.45s}
+  @keyframes rise{to{transform:translateY(0)}}
+
+  /* ---------- Ken Burns breathing ---------- */
+  .kenburns img{animation:kb 18s ease-in-out infinite alternate;transform-origin:60% 40%}
+  @keyframes kb{from{transform:scale(1) translate(0,0)}to{transform:scale(1.1) translate(-2%,2%)}}
+
+  /* ---------- Floating chips ---------- */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .floaty{animation:floaty 6s ease-in-out infinite}
+  .floaty-2{animation:floaty 7.5s ease-in-out infinite reverse}
+
+  /* ---------- Marquee ---------- */
+  .marquee{display:flex;overflow:hidden;user-select:none;gap:0}
+  .marquee-track{display:flex;flex-shrink:0;min-width:100%;justify-content:space-around;gap:3rem;animation:marquee 28s linear infinite}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+  /* ---------- Scroll reveal ---------- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- Pulse dot ---------- */
+  @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .pulse-dot{animation:pulse-dot 2s infinite}
+
+  /* ---------- Range sliders ---------- */
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;background:#e2e8f0;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #10b981;box-shadow:0 4px 12px rgba(16,185,129,.4);transition:transform .2s}
+  input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #10b981;box-shadow:0 4px 12px rgba(16,185,129,.4)}
+
+  /* ---------- Swiper overrides ---------- */
+  .card-swiper .swiper{aspect-ratio:4/3}
+  .modal-swiper .swiper{height:100%}
+  .sw-dots .swiper-pagination-bullet{background:#fff;opacity:.55;width:7px;height:7px}
+  .sw-dots .swiper-pagination-bullet-active{background:#10b981;opacity:1;width:18px;border-radius:99px}
+
+  /* ---------- Leaflet ---------- */
+  .map-pin{
+    white-space:nowrap;background:#0f172a;color:#fff;border:1.5px solid rgba(16,185,129,.65);
+    padding:5px 11px;border-radius:999px;font-weight:700;font-size:12px;font-family:"Plus Jakarta Sans",sans-serif;
+    box-shadow:0 10px 24px rgba(2,6,23,.4);cursor:pointer;transition:all .22s ease;
+    position:relative;transform:translate(-50%,-135%);display:inline-block;
+  }
+  .map-pin::after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+    border:6px solid transparent;border-top-color:#0f172a;border-bottom:0}
+  .map-pin:hover{background:#059669;border-color:#34d399;transform:translate(-50%,-150%) scale(1.07)}
+  .map-pin-hot{background:#059669;border-color:#34d399}
+  .map-pin-hot::after{border-top-color:#059669}
+  .leaflet-popup-content-wrapper{border-radius:16px;padding:0;overflow:hidden;box-shadow:0 20px 45px rgba(2,6,23,.35)}
+  .leaflet-popup-content{margin:0!important;width:230px!important;font-family:"Plus Jakarta Sans",sans-serif}
+  .leaflet-container{font-family:"Plus Jakarta Sans",sans-serif}
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto!important}
+    .line>span{transform:none}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+
+<body x-data="estate()" id="app" x-init="init()" class="font-sans antialiased bg-white text-slate-800">
+
+<!-- Scroll progress -->
+<div class="fixed top-0 left-0 h-[3px] bg-emerald-500 z-[70] transition-[width] duration-150 ease-out"
+     :style="`width:${scrollProgress}%`"></div>
+
+<!-- Toast -->
+<div x-show="toastShow" x-cloak
+     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-6"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+     class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] bg-zinc-900 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-2xl border border-white/10 flex items-center gap-2.5">
+  <i class="fa-solid fa-circle-check text-emerald-400"></i>
+  <span x-text="toastMsg"></span>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="sticky top-0 z-50 transition-all duration-300 border-b"
+        :class="scrolled ? 'bg-white/85 backdrop-blur-xl border-slate-200 shadow-sm' : 'bg-zinc-950/60 backdrop-blur-xl border-white/5'"
+        @scroll.window="scrolled = window.scrollY > 24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-[72px] flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <a href="#top" class="flex items-center gap-2.5 shrink-0">
+      <span class="w-10 h-10 rounded-xl bg-emerald-500 shadow-glow grid place-items-center text-white text-lg">
+        <i class="fa-solid fa-building-columns"></i>
+      </span>
+      <span class="leading-none">
+        <span class="block font-extrabold text-lg tracking-tight" :class="scrolled ? 'text-zinc-900' : 'text-white'">AURA<span class="text-emerald-500">.</span></span>
+        <span class="block text-[10px] uppercase tracking-[0.22em] font-semibold" :class="scrolled ? 'text-slate-400' : 'text-zinc-500'">estate platform</span>
+      </span>
+    </a>
+
+    <!-- Nav -->
+    <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold">
+      <template x-for="l in navLinks" :key="l.href">
+        <a :href="l.href" class="transition-colors duration-200 hover:text-emerald-500"
+           :class="scrolled ? 'text-slate-600' : 'text-zinc-300'" x-text="l.label"></a>
+      </template>
+    </nav>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button @click="showFavsOnly = !showFavsOnly; $nextTick(()=>document.getElementById('catalog').scrollIntoView({behavior:'smooth'}))"
+              class="relative w-10 h-10 rounded-full grid place-items-center transition-all duration-300"
+              :class="[showFavsOnly ? 'bg-emerald-500 text-white shadow-glow' : scrolled ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20']"
+              title="Избранное">
+        <i class="fa-solid fa-heart"></i>
+        <span x-show="favs.length" x-cloak
+              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold grid place-items-center border-2"
+              :class="scrolled ? 'border-white' : 'border-zinc-950'" x-text="favs.length"></span>
+      </button>
+      <button @click="callbackModal = true"
+              class="hidden sm:inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 shadow-glow">
+        <i class="fa-solid fa-phone text-xs"></i> Консультация
+      </button>
+      <button @click="mobileMenu = !mobileMenu" class="lg:hidden w-10 h-10 rounded-full grid place-items-center"
+              :class="scrolled ? 'bg-slate-100 text-slate-700' : 'bg-white/10 text-white'">
+        <i class="fa-solid" :class="mobileMenu ? 'fa-xmark' : 'fa-bars'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div x-show="mobileMenu" x-cloak x-transition class="lg:hidden border-t"
+       :class="scrolled ? 'bg-white border-slate-200' : 'bg-zinc-950 border-white/10'">
+    <nav class="px-6 py-4 flex flex-col gap-1 text-sm font-semibold">
+      <template x-for="l in navLinks" :key="'m'+l.href">
+        <a :href="l.href" @click="mobileMenu=false"
+           class="py-2.5 transition-colors hover:text-emerald-500"
+           :class="scrolled ? 'text-slate-700' : 'text-zinc-200'" x-text="l.label"></a>
+      </template>
+      <button @click="callbackModal = true; mobileMenu=false" class="mt-2 bg-emerald-500 text-white font-bold py-3 rounded-xl">Консультация</button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative bg-zinc-950 text-white grain overflow-hidden">
+  <div class="absolute inset-0 hero-grid"></div>
+  <div class="absolute -top-40 right-[-10%] w-[560px] h-[560px] rounded-full bg-emerald-500/15 blur-[120px]"></div>
+  <div class="absolute bottom-0 left-[-10%] w-[420px] h-[420px] rounded-full bg-indigo-500/10 blur-[110px]"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-32 sm:pb-40">
+    <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <!-- Left -->
+      <div class="lg:col-span-7">
+        <div class="inline-flex items-center gap-2.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1.5 text-[13px] font-semibold text-emerald-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+          Платформа недвижимости №1 по доверию — 2025
+        </div>
+
+        <h1 class="mt-7 font-display font-medium text-[42px] leading-[1.05] sm:text-6xl xl:text-[76px] tracking-tight">
+          <span class="line"><span>Найдите место,</span></span>
+          <span class="line"><span>в котором <em class="italic text-emerald-400 font-normal">захочется</em></span></span>
+          <span class="line"><span>жить.</span></span>
+        </h1>
+
+        <p class="mt-6 max-w-xl text-zinc-400 text-base sm:text-lg leading-relaxed">
+          Проверенные собственники, умные фильтры и AI-оценка стоимости.
+          Подберите квартиру, дом или пентхаус за 5 минут — без комиссий и скрытых платежей.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-10 grid grid-cols-3 gap-4 max-w-lg">
+          <div>
+            <div class="font-display text-3xl sm:text-4xl text-white"><span data-count="12480">0</span><span class="text-emerald-400">+</span></div>
+            <div class="text-xs text-zinc-500 font-semibold uppercase tracking-wider mt-1">объектов</div>
+          </div>
+          <div>
+            <div class="font-display text-3xl sm:text-4xl text-white"><span data-count="98">0</span><span class="text-emerald-400">%</span></div>
+            <div class="text-xs text-zinc-500 font-semibold uppercase tracking-wider mt-1">довольных клиентов</div>
+          </div>
+          <div>
+            <div class="font-display text-3xl sm:text-4xl text-white"><span data-count="5">0</span><span class="text-emerald-400">&nbsp;мин</span></div>
+            <div class="text-xs text-zinc-500 font-semibold uppercase tracking-wider mt-1">до идеального дома</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right visual -->
+      <div class="lg:col-span-5 relative hidden md:block">
+        <div class="kenburns relative rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-white/10 aspect-[4/5]">
+          <img src="https://picsum.photos/seed/aura-hero-penthouse-view/900/1120" alt="Пентхаус с панорамным видом" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent"></div>
+          <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-300">Объект недели</div>
+              <div class="font-display text-xl mt-1">Пентхаус, Москва-Сити</div>
+            </div>
+            <div class="text-right font-bold text-emerald-300">118 млн ₽</div>
+          </div>
+        </div>
+
+        <!-- Floating cards -->
+        <div class="floaty absolute -left-14 top-12 bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-3.5 shadow-2xl w-52">
+          <div class="flex items-center gap-3">
+            <img src="https://picsum.photos/seed/aura-verified-owner/80/80" class="w-10 h-10 rounded-xl object-cover" alt="">
+            <div>
+              <div class="text-[13px] font-bold">Собственник</div>
+              <div class="text-[11px] text-emerald-300 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Верифицирован</div>
+            </div>
+          </div>
+        </div>
+        <div class="floaty-2 absolute -right-8 bottom-16 bg-emerald-500 rounded-2xl p-4 shadow-glow w-48">
+          <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-emerald-100">
+            <span>AI-оценка</span><i class="fa-solid fa-microchip"></i>
+          </div>
+          <div class="mt-1.5 font-display text-2xl">+3,2%</div>
+          <div class="text-[11px] text-emerald-100/80">прогноз роста района за год</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEARCH WIDGET (overlap) ============ -->
+<div class="relative z-30 -mt-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="reveal bg-white rounded-3xl shadow-2xl ring-1 ring-slate-900/5 overflow-hidden">
+    <!-- Tabs -->
+    <div class="flex border-b border-slate-100">
+      <template x-for="t in dealTabs" :key="t.key">
+        <button @click="deal = t.key; typeTag='all'; filters.type='all'"
+                class="flex-1 sm:flex-none px-6 sm:px-8 py-4 text-sm font-bold relative transition-colors duration-200"
+                :class="deal === t.key ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600'">
+          <i :class="t.icon" class="mr-2"></i><span x-text="t.label"></span>
+          <span class="ml-2 text-[11px] px-2 py-0.5 rounded-full font-bold"
+                :class="deal === t.key ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'"
+                x-text="countByDeal(t.key)"></span>
+          <span x-show="deal === t.key" class="absolute bottom-0 left-6 right-6 h-[3px] rounded-t bg-emerald-500"></span>
+        </button>
+      </template>
+    </div>
+
+    <!-- Fields -->
+    <form @submit.prevent="applySearch()" class="grid sm:grid-cols-2 lg:grid-cols-6 gap-3 p-5 sm:p-6">
+      <label class="lg:col-span-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Город</span>
+        <select x-model="filters.city" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+          <option value="all">Все города</option>
+          <option>Москва</option><option>Санкт-Петербург</option><option>Сочи</option>
+        </select>
+      </label>
+      <label>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Тип</span>
+        <select x-model="filters.type" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+          <option value="all">Любой</option>
+          <option value="apartment">Квартира</option>
+          <option value="house">Дом</option>
+          <option value="penthouse">Пентхаус</option>
+          <option value="villa">Вилла</option>
+          <option value="office">Офис</option>
+        </select>
+      </label>
+      <label>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Цена от, ₽</span>
+        <input type="number" min="0" x-model="filters.min" :placeholder="deal==='rent' ? 'от 50 000' : 'от 5 000 000'"
+               class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+      </label>
+      <label>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Комнат</span>
+        <select x-model.number="filters.rooms" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+          <option :value="0">Любое</option>
+          <option :value="1">1</option><option :value="2">2</option><option :value="3">3</option><option :value="4">4+</option>
+        </select>
+      </label>
+      <button type="submit"
+              class="sm:col-span-2 lg:col-span-6 lg:w-auto lg:justify-self-end inline-flex items-center justify-center gap-2.5 bg-zinc-900 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-xl transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 group">
+        <i class="fa-solid fa-magnifying-glass"></i> Найти объекты
+        <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MARQUEE ============ -->
+<div class="mt-16 bg-zinc-950 border-y border-white/10 py-4 overflow-hidden">
+  <div class="marquee text-[13px] font-bold uppercase tracking-[0.18em] text-zinc-400">
+    <div class="marquee-track">
+      <span><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>12 480+ проверенных объектов</span>
+      <span><i class="fa-solid fa-percent text-emerald-500 mr-2"></i>0% комиссия для покупателя</span>
+      <span><i class="fa-solid fa-microchip text-emerald-500 mr-2"></i>AI-оценка каждого объекта</span>
+      <span><i class="fa-solid fa-scale-balanced text-emerald-500 mr-2"></i>Юридическое сопровождение сделки</span>
+      <span><i class="fa-solid fa-video text-emerald-500 mr-2"></i>3D-туры онлайн</span>
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      <span><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>12 480+ проверенных объектов</span>
+      <span><i class="fa-solid fa-percent text-emerald-500 mr-2"></i>0% комиссия для покупателя</span>
+      <span><i class="fa-solid fa-microchip text-emerald-500 mr-2"></i>AI-оценка каждого объекта</span>
+      <span><i class="fa-solid fa-scale-balanced text-emerald-500 mr-2"></i>Юридическое сопровождение сделки</span>
+      <span><i class="fa-solid fa-video text-emerald-500 mr-2"></i>3D-туры онлайн</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CATALOG ============ -->
+<section id="catalog" class="bg-slate-50 py-20 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="text-[12px] font-bold uppercase tracking-[0.25em] text-emerald-600 flex items-center gap-2">
+          <span class="w-8 h-px bg-emerald-500"></span>Каталог
+        </div>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl text-zinc-900 tracking-tight">Подборка объектов</h2>
+        <p class="mt-3 text-slate-500 max-w-md" x-show="!showFavsOnly">Каждый объект проверен юристами и оценён нейросетью. Обновлено сегодня.</p>
+        <p class="mt-3 text-slate-500 max-w-md" x-show="showFavsOnly" x-cloak><i class="fa-solid fa-heart text-rose-500 mr-2"></i>Показаны только избранные объекты.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-bold text-zinc-900 bg-white px-4 py-2.5 rounded-xl ring-1 ring-slate-200">
+          Найдено: <span class="text-emerald-600" x-text="filtered.length"></span>
+        </span>
+        <label class="relative">
+          <select x-model="sort" class="appearance-none bg-white ring-1 ring-slate-200 rounded-xl pl-4 pr-10 py-2.5 text-sm font-bold text-zinc-700 outline-none focus:ring-emerald-400 cursor-pointer">
+            <option value="popular">По популярности</option>
+            <option value="price-asc">Сначала дешевле</option>
+            <option value="price-desc">Сначала дороже</option>
+            <option value="new">Новинки</option>
+          </select>
+          <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
+        </label>
+      </div>
+    </div>
+
+    <!-- Type tags -->
+    <div class="reveal mt-8 flex flex-wrap gap-2.5" style="transition-delay:.1s">
+      <template x-for="t in typeTags" :key="t.k">
+        <button @click="typeTag = t.k"
+                class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300"
+                :class="typeTag === t.k ? 'bg-zinc-900 text-white shadow-lg scale-105' : 'bg-white text-slate-500 ring-1 ring-slate-200 hover:ring-emerald-400 hover:text-emerald-600'">
+          <span x-text="t.label"></span>
+          <span class="ml-1.5 text-xs opacity-60" x-text="countByType(t.k)"></span>
+        </button>
+      </template>
+      <button x-show="showFavsOnly" @click="showFavsOnly=false" x-cloak
+              class="px-5 py-2.5 rounded-full text-sm font-bold bg-rose-50 text-rose-500 ring-1 ring-rose-200 hover:bg-rose-100 transition">
+        <i class="fa-solid fa-xmark mr-1.5"></i>Сбросить избранное
+      </button>
+    </div>
+
+    <!-- Grid -->
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      <template x-for="(p, idx) in filtered" :key="p.id">
+        <article x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0 translate-y-8"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="group bg-white rounded-3xl overflow-hidden ring-1 ring-slate-200/70 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+                 x-init="new Swiper($el.querySelector('.swiper'), { loop: p.images.length > 1, grabCursor: true, navigation: { nextEl: $el.querySelector('.sw-next'), prevEl: $el.querySelector('.sw-prev') }, pagination: { el: $el.querySelector('.sw-dots'), clickable: true } })">
+          <!-- Gallery -->
+          <div class="relative swiper card-swiper overflow-hidden">
+            <div class="swiper-wrapper">
+              <template x-for="(img, i) in p.images" :key="i">
+                <div class="swiper-slide">
+                  <img :src="img" :alt="p.title" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                </div>
+              </template>
+            </div>
+            <div class="sw-dots absolute bottom-3 left-0 right-0 z-10"></div>
+            <button class="sw-prev absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-lg grid place-items-center text-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-emerald-500 hover:text-white">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <button class="sw-next absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-lg grid place-items-center text-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-emerald-500 hover:text-white">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+
+            <!-- Badges -->
+            <div class="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start">
+              <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white backdrop-blur"
+                    :class="p.deal==='buy' ? 'bg-emerald-500/90' : p.deal==='rent' ? 'bg-indigo-500/90' : 'bg-zinc-700/90'"
+                    x-text="p.deal==='buy' ? 'Продажа' : p.deal==='rent' ? 'Аренда' : 'Коммерция'"></span>
+              <span x-show="p.badges.includes('hot')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-amber-500/95 backdrop-blur">
+                <i class="fa-solid fa-fire mr-1"></i>Hot Deal
+              </span>
+              <span x-show="p.badges.includes('verified')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-700 bg-white/95 backdrop-blur">
+                <i class="fa-solid fa-circle-check mr-1"></i>Verified
+              </span>
+            </div>
+
+            <!-- Fav -->
+            <button @click.stop="toggleFav(p.id)"
+                    class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full grid place-items-center shadow-lg transition-all duration-300 hover:scale-110"
+                    :class="favs.includes(p.id) ? 'bg-rose-500 text-white' : 'bg-white/95 text-slate-500 hover:text-rose-500'">
+              <i class="fa-heart text-sm" :class="favs.includes(p.id) ? 'fa-solid' : 'fa-regular'"></i>
+            </button>
+          </div>
+
+          <!-- Body -->
+          <div class="p-5">
+            <div class="flex items-baseline justify-between gap-2">
+              <div class="font-display text-2xl text-zinc-900">
+                <span x-text="fmtMoney(p.price)"></span>
+                <span x-show="p.period" class="text-sm font-sans font-semibold text-slate-400">/мес</span>
+              </div>
+              <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md whitespace-nowrap">
+                <i class="fa-solid fa-chart-line mr-1"></i><span x-text="p.aiScore"></span>
+              </span>
+            </div>
+            <h3 class="mt-1.5 font-bold text-lg text-zinc-900 leading-snug" x-text="p.title"></h3>
+            <p class="mt-1 text-sm text-slate-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-location-dot text-emerald-500"></i>
+              <span x-text="p.city + ', ' + p.address"></span>
+            </p>
+
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-semibold text-slate-600">
+              <span class="flex items-center gap-1.5" x-show="p.beds"><i class="fa-solid fa-bed text-slate-300"></i><span x-text="p.beds"></span></span>
+              <span class="flex items-center gap-1.5" x-show="p.baths"><i class="fa-solid fa-bath text-slate-300"></i><span x-text="p.baths"></span></span>
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-slate-300"></i><span x-text="p.area + ' м²'"></span></span>
+              <button @click="openProperty(p.id)"
+                      class="ml-auto inline-flex items-center gap-2 text-emerald-600 font-bold hover:gap-3.5 transition-all duration-300">
+                Подробнее <i class="fa-solid fa-arrow-right text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </article>
+      </template>
+    </div>
+
+    <!-- Empty state -->
+    <div x-show="filtered.length === 0" x-cloak class="mt-12 bg-white rounded-3xl ring-1 ring-slate-200 py-16 text-center">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 grid place-items-center text-slate-300 text-2xl">
+        <i class="fa-solid" :class="showFavsOnly ? 'fa-heart-crack' : 'fa-magnifying-glass'"></i>
+      </div>
+      <h3 class="mt-5 font-display text-2xl text-zinc-900" x-text="showFavsOnly ? 'В избранном пока пусто' : 'Ничего не нашлось'"></h3>
+      <p class="mt-2 text-slate-400 text-sm max-w-sm mx-auto" x-text="showFavsOnly ? 'Нажмите на сердечко в карточке объекта, чтобы сохранить его сюда.' : 'Попробуйте смягчить условия — например, расширить диапазон цены или выбрать другой тип.'"></p>
+      <button @click="resetFilters()" class="mt-6 bg-zinc-900 hover:bg-emerald-500 text-white text-sm font-bold px-6 py-3 rounded-xl transition-colors duration-300">
+        Сбросить фильтры
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MAP ============ -->
+<section id="map" class="relative bg-zinc-950 text-white py-20 sm:py-24 grain overflow-hidden">
+  <div class="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[130px]"></div>
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="text-[12px] font-bold uppercase tracking-[0.25em] text-emerald-400 flex items-center gap-2">
+          <span class="w-8 h-px bg-emerald-500"></span>Карта
+        </div>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl tracking-tight">Объекты рядом с вами</h2>
+        <p class="mt-3 text-zinc-400 max-w-md">Живые цены прямо на карте. Кликните по метке, чтобы открыть карточку объекта.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <template x-for="c in mapCities" :key="c.name">
+          <button @click="setMapCity(c)"
+                  class="px-4 py-2 rounded-full text-sm font-bold transition-all duration-300"
+                  :class="activeCity === c.name ? 'bg-emerald-500 text-zinc-950 shadow-glow' : 'bg-white/5 text-zinc-300 ring-1 ring-white/10 hover:bg-white/10'">
+            <i class="fa-solid fa-location-dot mr-1.5 text-xs"></i><span x-text="c.name"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <div class="reveal mt-10 rounded-[2rem] overflow-hidden ring-1 ring-white/10 shadow-2xl relative z-0" style="transition-delay:.1s" x-init="initMap()" x-effect="drawMarkers(filtered)">
+      <div id="leaflet-map" class="h-[440px] sm:h-[540px] w-full bg-zinc-800"></div>
+      <div class="absolute bottom-4 left-4 z-[500] bg-zinc-950/85 backdrop-blur rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-300 ring-1 ring-white/10">
+        <span class="text-emerald-400" x-text="filtered.length"></span> объектов на карте · метки = реальная цена
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MORTGAGE CALCULATOR ============ -->
+<section id="calculator" class="bg-slate-50 py-20 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="reveal max-w-2xl">
+      <div class="text-[12px] font-bold uppercase tracking-[0.25em] text-emerald-600 flex items-center gap-2">
+        <span class="w-8 h-px bg-emerald-500"></span>Ипотека
+      </div>
+      <h2 class="mt-3 font-display text-4xl sm:text-5xl text-zinc-900 tracking-tight">Рассчитайте платёж за 30 секунд</h2>
+      <p class="mt-3 text-slate-500">Двигайте ползунки — цифры пересчитываются мгновенно. Без заявок и звонков.</p>
+    </div>
+
+    <div class="reveal mt-10 grid lg:grid-cols-5 gap-6" style="transition-delay:.1s">
+      <!-- Sliders -->
+      <div class="lg:col-span-3 bg-white rounded-3xl ring-1 ring-slate-200 shadow-soft p-6 sm:p-9 space-y-8">
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label class="text-sm font-bold text-slate-600"><i class="fa-solid fa-house text-emerald-500 mr-2"></i>Стоимость жилья</label>
+            <span class="font-display text-xl text-zinc-900" x-text="fmtMoney(calc.price)"></span>
+          </div>
+          <input type="range" min="2000000" max="150000000" step="500000" x-model.number="calc.price">
+          <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1.5"><span>2 млн ₽</span><span>150 млн ₽</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label class="text-sm font-bold text-slate-600"><i class="fa-solid fa-wallet text-emerald-500 mr-2"></i>Первоначальный взнос</label>
+            <span class="font-display text-xl text-zinc-900"><span x-text="calc.down"></span>% · <span class="text-base text-slate-400 font-sans font-semibold" x-text="fmtMoney(Math.round(calc.price*calc.down/100))"></span></span>
+          </div>
+          <input type="range" min="0" max="90" step="5" x-model.number="calc.down">
+          <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1.5"><span>0%</span><span>90%</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label class="text-sm font-bold text-slate-600"><i class="fa-solid fa-calendar-days text-emerald-500 mr-2"></i>Срок кредита</label>
+            <span class="font-display text-xl text-zinc-900"><span x-text="calc.years"></span> лет</span>
+          </div>
+          <input type="range" min="1" max="30" step="1" x-model.number="calc.years">
+          <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1.5"><span>1 год</span><span>30 лет</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label class="text-sm font-bold text-slate-600"><i class="fa-solid fa-percent text-emerald-500 mr-2"></i>Процентная ставка</label>
+            <span class="font-display text-xl text-zinc-900"><span x-text="calc.rate.toLocaleString('ru-RU')"></span>%</span>
+          </div>
+          <input type="range" min="4" max="25" step="0.1" x-model.number="calc.rate">
+          <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1.5"><span>4%</span><span>25%</span></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="lg:col-span-2 bg-zinc-950 text-white rounded-3xl p-6 sm:p-9 grain relative overflow-hidden">
+        <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-emerald-500/20 blur-3xl"></div>
+        <div class="relative z-10">
+          <div class="text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-400">Ежемесячный платёж</div>
+          <div class="mt-2 font-display text-4xl sm:text-[44px] leading-none">
+            <span x-text="fmtMoney(Math.round(monthlyPayment()))"></span>
+          </div>
+
+          <!-- Bar -->
+          <div class="mt-7">
+            <div class="flex h-2.5 rounded-full overflow-hidden">
+              <div class="bg-emerald-500 transition-all duration-500" :style="`width:${calc.down}%`"></div>
+              <div class="bg-zinc-700 flex-1"></div>
+            </div>
+            <div class="flex justify-between text-[11px] font-semibold mt-2">
+              <span class="text-emerald-400">Взнос · <span x-text="calc.down"></span>%</span>
+              <span class="text-zinc-400">Кредит · <span x-text="fmtMoney(loanAmount())"></span></span>
+            </div>
+          </div>
+
+          <div class="mt-7 space-y-4">
+            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+              <span class="text-sm text-zinc-400">Сумма кредита</span>
+              <span class="font-bold" x-text="fmtMoney(loanAmount())"></span>
+            </div>
+            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+              <span class="text-sm text-zinc-400">Переплата</span>
+              <span class="font-bold text-amber-400" x-text="fmtMoney(Math.round(overpayment()))"></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-zinc-400">Нужный доход <span class="text-zinc-600">(от)</span></span>
+              <span class="font-bold text-emerald-400" x-text="fmtMoney(Math.round(requiredIncome()))"></span>
+            </div>
+          </div>
+
+          <button @click="callbackModal = true"
+                  class="mt-8 w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3.5 rounded-xl transition-all duration-300 hover:shadow-glow">
+            Получить одобрение <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+          </button>
+          <p class="mt-4 text-[11px] text-zinc-500 leading-relaxed">* Предварительный расчёт по аннуитетной схеме. Точную ставку зафиксирует банк-партнёр.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY US ============ -->
+<section id="about" class="bg-white py-20 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="reveal max-w-2xl">
+      <div class="text-[12px] font-bold uppercase tracking-[0.25em] text-emerald-600 flex items-center gap-2">
+        <span class="w-8 h-px bg-emerald-500"></span>Почему Aura
+      </div>
+      <h2 class="mt-3 font-display text-4xl sm:text-5xl text-zinc-900 tracking-tight">Сделка без нервов. По стандарту.</h2>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <template x-for="(b, i) in benefits" :key="i">
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-3xl p-7 ring-1 ring-slate-200/70 hover:ring-emerald-400/60 hover:shadow-soft transition-all duration-300 hover:-translate-y-1.5"
+             :style="`transition-delay:${(i%3)*0.08}s`">
+          <div class="flex items-start justify-between">
+            <span class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 grid place-items-center text-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+              <i :class="b.icon"></i>
+            </span>
+            <span class="font-display text-4xl text-slate-200 group-hover:text-emerald-200 transition-colors" x-text="'0'+(i+1)"></span>
+          </div>
+          <h3 class="mt-5 font-bold text-lg text-zinc-900" x-text="b.title"></h3>
+          <p class="mt-2 text-sm text-slate-500 leading-relaxed" x-text="b.text"></p>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA STRIP ============ -->
+<section class="bg-emerald-500 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 50%, #fff 1.5px, transparent 1.5px);background-size:26px 26px"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div>
+      <h3 class="font-display text-3xl sm:text-4xl text-zinc-950 tracking-tight">Хотите подать объявление?</h3>
+      <p class="mt-2 text-emerald-950/70 font-medium">Разместим объект за 10 минут, проверку документов возьмём на себя.</p>
+    </div>
+    <button @click="callbackModal = true"
+            class="shrink-0 bg-zinc-950 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white hover:text-zinc-950 transition-all duration-300 hover:-translate-y-1 shadow-xl">
+      Подать объявление <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-sm"></i>
+    </button>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer id="contacts" class="bg-zinc-950 text-zinc-400 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+      <div class="lg:col-span-4">
+        <a href="#top" class="flex items-center gap-2.5">
+          <span class="w-10 h-10 rounded-xl bg-emerald-500 grid place-items-center text-white text-lg"><i class="fa-solid fa-building-columns"></i></span>
+          <span class="font-extrabold text-lg text-white tracking-tight">AURA<span class="text-emerald-500">.</span></span>
+        </a>
+        <p class="mt-4 text-sm leading-relaxed max-w-xs">Платформа поиска и аренды недвижимости с проверенными собственниками, AI-оценкой и нулевой комиссией.</p>
+        <div class="mt-5 flex gap-2.5">
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 ring-1 ring-white/10 grid place-items-center hover:bg-emerald-500 hover:text-zinc-950 transition-all duration-300"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 ring-1 ring-white/10 grid place-items-center hover:bg-emerald-500 hover:text-zinc-950 transition-all duration-300"><i class="fa-brands fa-vk"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 ring-1 ring-white/10 grid place-items-center hover:bg-emerald-500 hover:text-zinc-950 transition-all duration-300"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 ring-1 ring-white/10 grid place-items-center hover:bg-emerald-500 hover:text-zinc-950 transition-all duration-300"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="lg:col-span-2">
+        <h4 class="text-white font-bold text-sm uppercase tracking-wider">Навигация</h4>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="#catalog" class="hover:text-emerald-400 transition-colors">Каталог</a></li>
+          <li><a href="#map" class="hover:text-emerald-400 transition-colors">Карта</a></li>
+          <li><a href="#calculator" class="hover:text-emerald-400 transition-colors">Ипотека</a></li>
+          <li><a href="#about" class="hover:text-emerald-400 transition-colors">О нас</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <h4 class="text-white font-bold text-sm uppercase tracking-wider">Города</h4>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="#map" class="hover:text-emerald-400 transition-colors">Москва</a></li>
+          <li><a href="#map" class="hover:text-emerald-400 transition-colors">Санкт-Петербург</a></li>
+          <li><a href="#map" class="hover:text-emerald-400 transition-colors">Сочи</a></li>
+          <li><a href="#map" class="hover:text-emerald-400 transition-colors">Казань — скоро</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-4">
+        <h4 class="text-white font-bold text-sm uppercase tracking-wider">Новинки каждую неделю</h4>
+        <p class="mt-4 text-sm">Оставьте почту — пришлём подборку лучших объектов раньше всех.</p>
+        <form @submit.prevent="subscribeEmail && (subscribed=true)" class="mt-4 flex gap-2">
+          <input type="email" required x-model="subscribeEmail" placeholder="you@mail.ru"
+                 class="flex-1 bg-white/5 ring-1 ring-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none focus:ring-emerald-500 transition">
+          <button class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 rounded-xl transition-colors"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+        <p x-show="subscribed" x-cloak class="mt-3 text-emerald-400 text-sm font-semibold"><i class="fa-solid fa-circle-check mr-1.5"></i>Готово! Проверьте почту — там промокод на первую сделку.</p>
+        <div class="mt-6 text-sm space-y-1.5">
+          <p><i class="fa-solid fa-phone text-emerald-500 mr-2"></i>+7 (495) 120-40-40</p>
+          <p><i class="fa-solid fa-envelope text-emerald-500 mr-2"></i>hello@aura.estate</p>
+        </div>
+      </div>
+    </div>
+    <div class="pt-7 flex flex-col sm:flex-row justify-between gap-3 text-xs text-zinc-600">
+      <span>© 2025 AURA Estate. Все права защищены.</span>
+      <span>Политика конфиденциальности · Пользовательское соглашение</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ PROPERTY MODAL ============ -->
+<template x-if="selected">
+  <div class="fixed inset-0 z-[90] flex items-end sm:items-center justify-center p-0 sm:p-6"
+       x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" @click="closeModals()"></div>
+    <div class="relative bg-white w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl shadow-2xl"
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-10 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
+      <button @click="closeModals()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-zinc-950/60 backdrop-blur text-white grid place-items-center hover:bg-emerald-500 transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Gallery -->
+      <div class="swiper modal-swiper h-64 sm:h-96 rounded-t-3xl sm:rounded-t-3xl overflow-hidden"
+           x-init="$nextTick(()=> new Swiper($el, { loop: selected.images.length>1, navigation: { nextEl: $el.querySelector('.m-next'), prevEl: $el.querySelector('.m-prev') }, pagination: { el: $el.querySelector('.m-dots'), clickable: true } }))">
+        <div class="swiper-wrapper">
+          <template x-for="(img,i) in selected.images" :key="i">
+            <div class="swiper-slide"><img :src="img" :alt="selected.title" class="w-full h-full object-cover"></div>
+          </template>
+        </div>
+        <div class="m-dots absolute bottom-4 left-0 right-0 z-10"></div>
+        <button class="m-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg grid place-items-center hover:bg-emerald-500 hover:text-white transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="m-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg grid place-items-center hover:bg-emerald-500 hover:text-white transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+
+      <div class="p-6 sm:p-9 grid lg:grid-cols-5 gap-9">
+        <!-- Info -->
+        <div class="lg:col-span-3">
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 rounded-lg text-[11px] font-bold text-white"
+                  :class="selected.deal==='buy'?'bg-emerald-500':selected.deal==='rent'?'bg-indigo-500':'bg-zinc-700'"
+                  x-text="selected.deal==='buy'?'Продажа':selected.deal==='rent'?'Аренда':'Коммерция'"></span>
+            <span x-show="selected.badges.includes('verified')" class="px-3 py-1 rounded-lg text-[11px] font-bold text-emerald-700 bg-emerald-50"><i class="fa-solid fa-circle-check mr-1"></i>Verified</span>
+            <span x-show="selected.badges.includes('hot')" class="px-3 py-1 rounded-lg text-[11px] font-bold text-amber-700 bg-amber-50"><i class="fa-solid fa-fire mr-1"></i>Hot Deal</span>
+            <span class="px-3 py-1 rounded-lg text-[11px] font-bold text-slate-500 bg-slate-100">ID AE-10<span x-text="selected.id"></span></span>
+          </div>
+          <h3 class="mt-4 font-display text-3xl sm:text-4xl text-zinc-900 tracking-tight" x-text="selected.title"></h3>
+          <p class="mt-2 text-slate-400"><i class="fa-solid fa-location-dot text-emerald-500 mr-2"></i><span x-text="selected.city+', '+selected.address"></span></p>
+          <div class="mt-4 font-display text-3xl text-emerald-600">
+            <span x-text="fmtMoney(selected.price)"></span>
+            <span x-show="selected.period" class="text-lg font-sans text-slate-400">/мес</span>
+          </div>
+
+          <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <template x-for="f in featureList(selected)" :key="f.label">
+              <div class="bg-slate-50 rounded-xl px-4 py-3">
+                <div class="text-[11px] uppercase tracking-wider text-slate-400 font-bold" x-text="f.label"></div>
+                <div class="mt-0.5 font-bold text-zinc-900" x-text="f.value"></div>
+              </div>
+            </template>
+          </div>
+
+          <p class="mt-6 text-slate-500 leading-relaxed text-[15px]" x-text="selected.desc"></p>
+
+          <!-- Floor plan -->
+          <div class="mt-7 rounded-2xl ring-1 ring-slate-200 p-5">
+            <div class="text-sm font-bold text-zinc-900 mb-3"><i class="fa-solid fa-compass-drafting text-emerald-500 mr-2"></i>Планировка (схема)</div>
+            <svg viewBox="0 0 340 190" class="w-full h-44 text-slate-300" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="8" y="8" width="324" height="174" rx="4"/>
+              <line x1="150" y1="8" x2="150" y2="120"/><line x1="8" y1="120" x2="230" y2="120"/>
+              <line x1="230" y1="60" x2="332" y2="60"/><line x1="230" y1="60" x2="230" y2="182"/>
+              <path d="M150 120 q 20 0 20 -20" stroke-dasharray="4 4"/>
+              <g fill="currentColor" stroke="none" font-size="11" font-family="Plus Jakarta Sans" font-weight="600" class="text-slate-400">
+                <text x="45" y="68">Гостиная · 28 м²</text>
+                <text x="30" y="155">Кухня · 16 м²</text>
+                <text x="252" y="38">Спальня · 18 м²</text>
+                <text x="252" y="125">Санузел · 7 м²</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Booking form -->
+        <div class="lg:col-span-2">
+          <div class="bg-zinc-950 text-white rounded-3xl p-6 grain relative overflow-hidden sticky top-6">
+            <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-emerald-500/20 blur-2xl"></div>
+            <div class="relative z-10">
+              <h4 class="font-display text-2xl">Записаться на просмотр</h4>
+              <p class="mt-1.5 text-sm text-zinc-400">Бесплатно. Покажем в удобное время, включая вечер и выходные.</p>
+
+              <form x-show="!viewSent" @submit.prevent="viewSent = true" class="mt-5 space-y-3">
+                <input required type="text" placeholder="Ваше имя" class="w-full bg-white/5 ring-1 ring-white/10 rounded-xl px-4 py-3 text-sm placeholder-zinc-500 outline-none focus:ring-emerald-500 transition">
+                <input required type="tel" placeholder="+7 (___) ___-__-__" class="w-full bg-white/5 ring-1 ring-white/10 rounded-xl px-4 py-3 text-sm placeholder-zinc-500 outline-none focus:ring-emerald-500 transition">
+                <input required type="date" :min="new Date().toISOString().split('T')[0]" class="w-full bg-white/5 ring-1 ring-white/10 rounded-xl px-4 py-3 text-sm text-zinc-300 outline-none focus:ring-emerald-500 transition [color-scheme:dark]">
+                <button class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3.5 rounded-xl transition-colors">Записаться</button>
+              </form>
+              <div x-show="viewSent" x-cloak class="mt-5 bg-emerald-500/10 ring-1 ring-emerald-500/40 rounded-2xl p-5 text-center">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-3xl"></i>
+                <p class="mt-2.5 font-bold">Заявка отправлена!</p>
+                <p class="text-sm text-zinc-400 mt-1">Менеджер свяжется с вами в течение 15 минут.</p>
+              </div>
+
+              <div class="mt-5 grid grid-cols-2 gap-2.5">
+                <button @click="callbackModal = true" class="bg-white/5 ring-1 ring-white/10 hover:bg-white/10 rounded-xl py-3 text-sm font-bold transition"><i class="fa-solid fa-phone mr-2 text-emerald-400"></i>Звонок</button>
+                <button @click="toggleFav(selected.id)" class="rounded-xl py-3 text-sm font-bold transition ring-1"
+                        :class="favs.includes(selected.id) ? 'bg-rose-500 border-rose-500 text-white ring-rose-500' : 'bg-white/5 ring-white/10 hover:bg-white/10'">
+                  <i class="fa-heart mr-2" :class="favs.includes(selected.id)?'fa-solid':'fa-regular'"></i><span x-text="favs.includes(selected.id)?'В избранном':'В избранное'"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- ============ CALLBACK MODAL ============ -->
+<template x-if="callbackModal">
+  <div class="fixed inset-0 z-[95] flex items-center justify-center p-5"
+       x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+    <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" @click="callbackModal=false"></div>
+    <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl p-8"
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+      <button @click="callbackModal=false" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 grid place-items-center text-slate-500 hover:bg-slate-200 transition"><i class="fa-solid fa-xmark"></i></button>
+
+      <template x-if="!callbackSent">
+        <div>
+          <span class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 grid place-items-center text-xl"><i class="fa-solid fa-headset"></i></span>
+          <h3 class="mt-5 font-display text-3xl text-zinc-900">Заказать звонок</h3>
+          <p class="mt-2 text-sm text-slate-500">Перезвоним за 15 минут, ответим на вопросы и подберём варианты под ваш бюджет.</p>
+          <form @submit.prevent="callbackSent = true" class="mt-6 space-y-3">
+            <input required type="text" placeholder="Ваше имя" class="w-full bg-slate-50 ring-1 ring-slate-200 rounded-xl px-4 py-3.5 text-sm outline-none focus:ring-emerald-500 focus:bg-white transition">
+            <input required type="tel" placeholder="+7 (___) ___-__-__" class="w-full bg-slate-50 ring-1 ring-slate-200 rounded-xl px-4 py-3.5 text-sm outline-none focus:ring-emerald-500 focus:bg-white transition">
+            <button class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-glow">
+              Жду звонка <i class="fa-solid fa-phone ml-2 text-sm"></i>
+            </button>
+          </form>
+          <p class="mt-4 text-[11px] text-slate-400 text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности.</p>
+        </div>
+      </template>
+      <template x-if="callbackSent">
+        <div class="text-center py-6">
+          <span class="w-16 h-16 mx-auto rounded-full bg-emerald-500 text-white grid place-items-center text-2xl shadow-glow"><i class="fa-solid fa-check"></i></span>
+          <h3 class="mt-5 font-display text-3xl text-zinc-900">Принято!</h3>
+          <p class="mt-2 text-sm text-slate-500">Менеджер Анна уже набирает ваш номер. среднее время ответа — 9 минут.</p>
+          <button @click="callbackModal=false; callbackSent=false" class="mt-6 text-sm font-bold text-emerald-600 hover:text-emerald-500">Закрыть</button>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('estate', () => ({
+    /* ---------- UI state ---------- */
+    scrolled: false, mobileMenu: false, scrollProgress: 0,
+    toastShow: false, toastMsg: '', toastTimer: null,
+    callbackModal: false, callbackSent: false,
+    selected: null, viewSent: false,
+    showFavsOnly: false,
+    subscribeEmail: '', subscribed: false,
+
+    navLinks: [
+      {href:'#catalog', label:'Каталог'},
+      {href:'#map', label:'Карта'},
+      {href:'#calculator', label:'Калькулятор'},
+      {href:'#about', label:'О нас'},
+      {href:'#contacts', label:'Контакты'},
+    ],
+    dealTabs: [
+      {key:'buy', label:'Купить', icon:'fa-solid fa-key'},
+      {key:'rent', label:'Снять', icon:'fa-solid fa-house'},
+      {key:'commercial', label:'Коммерческая', icon:'fa-solid fa-city'},
+    ],
+    typeTags: [
+      {k:'all', label:'Все'},
+      {k:'apartment', label:'Квартиры'},
+      {k:'house', label:'Дома'},
+      {k:'penthouse', label:'Пентхаусы'},
+      {k:'villa', label:'Виллы'},
+    ],
+    benefits: [
+      {icon:'fa-solid fa-user-check', title:'Проверенные собственники', text:'Каждый владелец проходит верификацию личности и документов. Объект снимается с публикации за 24 часа, если возникают сомнения.'},
+      {icon:'fa-solid fa-hand-holding-dollar', title:'0% скрытых комиссий', text:'Никаких комиссий, «страховок» и сервисных сборов. Цена в объявлении — цена в сделке. Фиксируем это в договоре.'},
+      {icon:'fa-solid fa-microchip', title:'AI-оценка стоимости', text:'Нейросеть анализирует 40+ параметров и историю рынка, показывая справедливую цену и прогноз роста района.'},
+      {icon:'fa-solid fa-scale-balanced', title:'Юридическое сопровождение', text:'Юрист ведёт сделку от задатка до регистрации права собственности. Страхование титула включено в каждый договор.'},
+      {icon:'fa-solid fa-vr-cardboard', title:'3D-туры и онлайн-сделки', text:'Смотрите объекты по видеотуру и подписывайте документы электронной подписью — даже находясь в другом городе.'},
+      {icon:'fa-solid fa-headset', title:'Консьерж-сервис 24/7', text:'Переезд, клининг, подключение коммуникаций и передача ключей — персональный менеджер берёт рутину на себя.'},
+    ],
+
+    /* ---------- Filters ---------- */
+    deal: 'buy',
+    typeTag: 'all',
+    sort: 'popular',
+    filters: { city:'all', type:'all', rooms:0, min:'', max:'' },
+    calc: { price: 18000000, down: 20, years: 15, rate: 9.5 },
+
+    favs: [],
+    mapCities: [
+      {name:'Москва', coords:[55.751,37.618], zoom:11},
+      {name:'Санкт-Петербург', coords:[59.93,30.335], zoom:11},
+      {name:'Сочи', coords:[43.585,39.72], zoom:12},
+    ],
+    activeCity: 'Москва',
+    map: null, markerLayer: null,
+
+    /* ---------- Demo data ---------- */
+    properties: [
+      { id:1, deal:'buy', type:'penthouse', title:'Пентхаус с видом на Москва-Сити', city:'Москва', address:'Пресненская наб., 12', lat:55.7473, lng:37.5377,
+        price:118000000, period:null, beds:4, baths:3, area:210, floor:'52 / 54', year:2021, badges:['hot','verified'], pop:98, added:'2025-06-14', aiScore:'AI: 9.6',
+        desc:'Двухуровневый пентхаус с панорамным остеклением 360° на 52-м этаже башни. Отделка под ключ в стиле современной классики, приватный лифт, терраса 40 м² и вид на реку. Резидентный сервис уровня пятизвёздочного отеля: консьерж, спа, переговорные.',
+        images:['https://picsum.photos/seed/aura-penthouse-livingroom/900/680','https://picsum.photos/seed/aura-penthouse-bedroom/900/680','https://picsum.photos/seed/aura-penthouse-terrace/900/680'] },
+      { id:2, deal:'buy', type:'apartment', title:'Квартира в доме на Арбате', city:'Москва', address:'ул. Старый Арбат, 24', lat:55.7494, lng:37.5925,
+        price:64500000, period:null, beds:3, baths:2, area:128, floor:'4 / 7', year:2019, badges:['verified'], pop:87, added:'2025-05-28', aiScore:'AI: 9.1',
+        desc:'Исторический доходный дом 1913 года после полной реконструкции. Высокие потолки 3,4 м, восстановленная лепнина, окна на тихий двор. Дизайнерский ремонт от бюро ARCHSLON, встроенная кухня Bulthaup, система «умный дом».',
+        images:['https://picsum.photos/seed/aura-arbat-interior/900/680','https://picsum.photos/seed/aura-arbat-kitchen/900/680','https://picsum.photos/seed/aura-arbat-hall/900/680'] },
+      { id:3, deal:'rent', type:'apartment', title:'Дизайнерские апартаменты на Патриарших', city:'Москва', address:'ул. Малая Бронная, 18', lat:55.7635, lng:37.5916,
+        price:220000, period:'month', beds:2, baths:2, area:96, floor:'6 / 9', year:2022, badges:['hot'], pop:92, added:'2025-07-02', aiScore:'AI: 9.4',
+        desc:'Апартаменты с дизайнерским ремонтом в двух минутах от Патриарших прудов. Мебель итальянских брендов, панорамные окна, тёплые полы. Идеально для пары или экспата: всё включено — интернет, клининг дважды в месяц, паркинг.',
+        images:['https://picsum.photos/seed/aura-patriki-loft/900/680','https://picsum.photos/seed/aura-patriki-bath/900/680','https://picsum.photos/seed/aura-patriki-view/900/680'] },
+      { id:4, deal:'buy', type:'house', title:'Семейный дом на Рублёво-Успенском', city:'Москва', address:'Рублёвское шоссе, 35', lat:55.756, lng:37.36,
+        price:89000000, period:null, beds:5, baths:4, area:340, floor:'2 этажа', year:2020, badges:['verified'], pop:78, added:'2025-04-19', aiScore:'AI: 8.8',
+        desc:'Дом из клеёного бруса на лесном участке 18 соток. Панорамная гостиная со вторым светом, камин, сауна и гостевой флигель. Закрытый посёлок с охраной, 12 минут до метро «Молодёжная».',
+        images:['https://picsum.photos/seed/aura-rublevka-house/900/680','https://picsum.photos/seed/aura-rublevka-garden/900/680','https://picsum.photos/seed/aura-rublevka-inside/900/680'] },
+      { id:5, deal:'buy', type:'villa', title:'Вилла с видом на море', city:'Сочи', address:'ул. Виноградная, 27', lat:43.585, lng:39.73,
+        price:145000000, period:null, beds:6, baths:5, area:420, floor:'3 этажа', year:2023, badges:['hot','verified'], pop:95, added:'2025-06-30', aiScore:'AI: 9.7',
+        desc:'Современная вилла на первой линии с собственным выходом к морю. Инфинити-бассейн с подогревом, зона спа, винный погреб. Полностью меблирована и готова к проживанию — заезжайте завтра.',
+        images:['https://picsum.photos/seed/aura-sochi-villa-pool/900/680','https://picsum.photos/seed/aura-sochi-villa-sea/900/680','https://picsum.photos/seed/aura-sochi-villa-night/900/680'] },
+      { id:6, deal:'rent', type:'apartment', title:'Лофт у «Севкабель Порта»', city:'Санкт-Петербург', address:'Кожевенная линия, 40', lat:59.928, lng:30.238,
+        price:95000, period:'month', beds:1, baths:1, area:68, floor:'3 / 5', year:2020, badges:[], pop:74, added:'2025-05-11', aiScore:'AI: 8.5',
+        desc:'Лофт с кирпичными стенами и потолками 4,2 м в бывшем кабельном цехе. Окна на Финский залив, рабочее место у панорамного окна. В доме кофейни, галереи и концертная площадка.',
+        images:['https://picsum.photos/seed/aura-sevkabel-loft/900/680','https://picsum.photos/seed/aura-sevkabel-window/900/680','https://picsum.photos/seed/aura-sevkabel-kitchen/900/680'] },
+      { id:7, deal:'commercial', type:'office', title:'Офис в башне «ОКО», Москва-Сити', city:'Москва', address:'Пресненская наб., 8с2', lat:55.7489, lng:37.5362,
+        price:480000, period:'month', beds:0, baths:2, area:320, floor:'31 / 85', year:2016, badges:['verified'], pop:66, added:'2025-03-22', aiScore:'AI: 8.9',
+        desc:'Офисный блок класса А+ на 31-м этаже с панорамой города. Готовая планировка: open space на 30 рабочих мест, 2 переговорные, зона отдыха. В ставку включены эксплуатация и 3 парковочных места.',
+        images:['https://picsum.photos/seed/aura-oko-office/900/680','https://picsum.photos/seed/aura-oko-meeting/900/680','https://picsum.photos/seed/aura-oko-view/900/680'] },
+      { id:8, deal:'commercial', type:'office', title:'Стрит-ретейл на Остоженке', city:'Москва', address:'ул. Остоженка, 25', lat:55.736, lng:37.596,
+        price:98000000, period:null, beds:0, baths:1, area:180, floor:'1 / 6', year:2008, badges:['verified'], pop:61, added:'2025-02-14', aiScore:'AI: 8.2',
+        desc:'Помещение свободного назначения на «Золотой миле» с витринным остеклением и отдельным входом. Трафик 12 000 человек в день, все коммуникации, 90 кВт мощности. Идеально под ресторан или шоурум.',
+        images:['https://picsum.photos/seed/aura-ostozhenka-retail/900/680','https://picsum.photos/seed/aura-ostozhenka-street/900/680','https://picsum.photos/seed/aura-ostozhenka-inside/900/680'] },
+      { id:9, deal:'buy', type:'apartment', title:'Видовая квартира в Раменках', city:'Москва', address:'Мичуринский проспект, 7', lat:55.712, lng:37.508,
+        price:38900000, period:null, beds:2, baths:1, area:74, floor:'18 / 32', year:2024, badges:['hot'], pop:83, added:'2025-07-08', aiScore:'AI: 9.0',
+        desc:'Квартира в новом ЖК бизнес-класса у метро «Раменки». Кухня-гостиная 26 м², мастер-спальня с гардеробной, вид на Воробьёвы горы. Отделка white box, закрытый двор без машин.',
+        images:['https://picsum.photos/seed/aura-ramenki-flat/900/680','https://picsum.photos/seed/aura-ramenki-bedroom/900/680','https://picsum.photos/seed/aura-ramenki-city/900/680'] },
+    ],
+
+    /* ---------- Init ---------- */
+    init() {
+      try { this.favs = JSON.parse(localStorage.getItem('aura_favs') || '[]'); } catch(e) { this.favs = []; }
+      this.$watch('favs', v => localStorage.setItem('aura_favs', JSON.stringify(v)), { deep:true });
+
+      window.addEventListener('scroll', () => {
+        this.scrolled = window.scrollY > 24;
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        this.scrollProgress = h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0;
+      }, { passive:true });
+      this.scrolled = window.scrollY > 24;
+
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') this.closeModals(); });
+
+      // Global hook for Leaflet popups
+      window.openProperty = (id) => {
+        const root = Alpine.$data(document.getElementById('app'));
+        root.openProperty(id);
+      };
+    },
+
+    /* ---------- Helpers ---------- */
+    fmtMoney(n){ return new Intl.NumberFormat('ru-RU').format(n) + ' ₽'; },
+    fmtShort(n){
+      if (n >= 1e6) { const v = (n/1e6); return (v % 1 ? v.toFixed(1).replace('.',',') : v) + ' млн ₽'; }
+      return Math.round(n/1000) + ' тыс ₽';
+    },
+    countByDeal(d){ return this.properties.filter(p => p.deal === d).length; },
+    countByType(t){
+      const base = this.properties.filter(p => p.deal === this.deal);
+      return t === 'all' ? base.length : base.filter(p => p.type === t).length;
+    },
+    featureList(p){
+      const list = [];
+      if (p.beds) list.push({label:'Спальни', value: p.beds});
+      if (p.baths) list.push({label:'Санузлы', value: p.baths});
+      list.push({label:'Площадь', value: p.area + ' м²'});
+      list.push({label:'Этаж', value: p.floor});
+      list.push({label:'Год', value: p.year});
+      const types = {apartment:'Квартира', house:'Дом', penthouse:'Пентхаус', villa:'Вилла', office:'Коммерция'};
+      list.push({label:'Тип', value: types[p.type] || p.type});
+      return list;
+    },
+
+    /* ---------- Filtered list ---------- */
+    get filtered(){
+      let list = this.properties.filter(p => {
+        if (this.showFavsOnly && !this.favs.includes(p.id)) return false;
+        if (p.deal !== this.deal) return false;
+        if (this.typeTag !== 'all' && p.type !== this.typeTag) return false;
+        if (this.filters.city !== 'all' && p.city !== this.filters.city) return false;
+        if (this.filters.type !== 'all' && p.type !== this.filters.type) return false;
+        if (this.filters.rooms) {
+          if (this.filters.rooms === 4) { if (p.beds < 4) return false; }
+          else if (p.beds !== this.filters.rooms) return false;
+        }
+        const min = parseFloat(this.filters.min), max = parseFloat(this.filters.max);
+        if (!isNaN(min) && p.price < min) return false;
+        if (!isNaN(max) && p.price > max) return false;
+        return true;
+      });
+      switch(this.sort){
+        case 'price-asc':  list.sort((a,b) => a.price - b.price); break;
+        case 'price-desc': list.sort((a,b) => b.price - a.price); break;
+        case 'new':        list.sort((a,b) => new Date(b.added) - new Date(a.added)); break;
+        default:           list.sort((a,b) => b.pop - a.pop);
+      }
+      return list;
+    },
+
+    applySearch(){
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.getElementById('catalog').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    },
+    resetFilters(){
+      this.deal = 'buy'; this.typeTag = 'all';
+      this.filters = { city:'all', type:'all', rooms:0, min:'', max:'' };
+      this.showFavsOnly = false;
+    },
+
+    /* ---------- Favorites & toast ---------- */
+    toggleFav(id){
+      if (this.favs.includes(id)) {
+        this.favs = this.favs.filter(f => f !== id);
+        this.toast('Удалено из избранного');
+      } else {
+        this.favs = [...this.favs, id];
+        this.toast('Добавлено в избранное');
+      }
+    },
+    toast(msg){
+      this.toastMsg = msg; this.toastShow = true;
+      clearTimeout(this.toastTimer);
+      this.toastTimer = setTimeout(() => this.toastShow = false, 2400);
+    },
+
+    /* ---------- Modals ---------- */
+    openProperty(id){
+      this.selected = this.properties.find(p => p.id === id) || null;
+      this.viewSent = false;
+      if (this.map) this.map.closePopup();
+      document.body.style.overflow = 'hidden';
+    },
+    closeModals(){
+      this.selected = null; this.callbackModal = false;
+      document.body.style.overflow = '';
+    },
+
+    /* ---------- Calculator ---------- */
+    loanAmount(){ return Math.max(0, this.calc.price * (1 - this.calc.down/100)); },
+    monthlyPayment(){
+      const P = this.loanAmount();
+      if (P <= 0) return 0;
+      const i = this.calc.rate / 100 / 12, n = this.calc.years * 12;
+      if (i === 0) return P / n;
+      return P * i / (1 - Math.pow(1 + i, -n));
+    },
+    overpayment(){ return this.monthlyPayment() * this.calc.years * 12 - this.loanAmount(); },
+    requiredIncome(){ return this.monthlyPayment() / 0.35; },
+
+    /* ---------- Map ---------- */
+    initMap(){
+      if (this.map) return;
+      this.map = L.map('leaflet-map', { scrollWheelZoom:false, zoomControl:true }).setView([55.751,37.618], 11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; CARTO',
+        maxZoom: 19
+      }).addTo(this.map);
+      this.markerLayer = L.layerGroup().addTo(this.map);
+      setTimeout(() => this.map.invalidateSize(), 200);
+    },
+    setMapCity(c){
+      this.activeCity = c.name;
+      if (this.map) this.map.flyTo(c.coords, c.zoom, { duration: 1.2 });
+    },
+    drawMarkers(list){
+      if (!this.map || !this.markerLayer) return;
+      this.markerLayer.clearLayers();
+      list.forEach(p => {
+        const icon = L.divIcon({
+          className: 'bg-transparent',
+          html: '<span class="map-pin ' + (p.badges.includes('hot') ? 'map-pin-hot' : '') + '">' + this.fmtShort(p.price) + (p.period ? '/мес' : '') + '</span>',
+          iconSize: [0, 0]
+        });
+        const marker = L.marker([p.lat, p.lng], { icon }).addTo(this.markerLayer);
+        marker.bindPopup(
+          '<div style="font-family:Plus Jakarta Sans,sans-serif">' +
+            '<img src="' + p.images[0] + '" style="width:100%;height:110px;object-fit:cover;display:block" alt="">' +
+            '<div style="padding:12px 14px 14px">' +
+              '<div style="font-weight:700;font-size:13px;color:#0f172a;line-height:1.3">' + p.title + '</div>' +
+              '<div style="font-size:11px;color:#94a3b8;margin-top:2px">' + p.city + ', ' + p.address + '</div>' +
+              '<div style="font-weight:800;color:#059669;margin-top:6px;font-size:15px">' + this.fmtMoney(p.price) + (p.period ? ' <span style="font-size:11px;color:#94a3b8;font-weight:600">/мес</span>' : '') + '</div>' +
+              '<button onclick="openProperty(' + p.id + ')" style="margin-top:10px;width:100%;background:#0f172a;color:#fff;border:none;border-radius:10px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Подробнее</button>' +
+            '</div>' +
+          '</div>',
+          { maxWidth: 240, closeButton: true }
+        );
+      });
+    },
+  }));
+});
+
+/* ---------- Scroll reveal + counters ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const fmt = n => new Intl.NumberFormat('ru-RU').format(n);
+  const cio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      cio.unobserve(en.target);
+      const target = parseInt(en.target.dataset.count, 10);
+      if (reduce) { en.target.textContent = fmt(target); return; }
+      const dur = 1600, t0 = performance.now();
+      const step = t => {
+        const k = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - k, 3);
+        en.target.textContent = fmt(Math.round(target * eased));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+});
+</script>
+
+<!-- Alpine.js (последним, чтобы все данные были зарегистрированы) -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</body>
+</html>
